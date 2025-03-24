@@ -1,22 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>To Do List</h1>
+        <img src="./android-chrome-192x192.png" alt="Davidson Designs Logo"/>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          This is the start of my To-Do List App.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p>
+          The application allows users to sign up, log in, create, read,
+          update, and delete tasks.
+        </p>
       </header>
     </div>
   );
