@@ -6,6 +6,7 @@ import { Container, TextField, Button, Box, Typography, Paper, IconButton, List,
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
@@ -16,6 +17,11 @@ export default function Tasks() {
       setNewTask('');
     }
   };
+
+  const handleDeleteTask = (idx) => {
+    setTasks(tasks.filter((_, index) => index !== idx));
+  };
+
 
   return (
     <Container 
@@ -110,6 +116,7 @@ export default function Tasks() {
                     <IconButton 
                       edge="end" 
                       aria-label="delete"
+                      onClick={() => handleDeleteTask(index)}
                       sx={{ color: '#ff4d4d' }}
                     >
                       <DeleteIcon />
