@@ -26,18 +26,12 @@ export default function Tasks() {
         sx={{ 
           width: '100%', 
           p: 4, 
-          borderRadius: 3,
-          background: 'white',
-          boxShadow: '0 6px 12px rgba(0,0,0,0.05)'
         }}
       >
         <Typography 
           variant="h4" 
           gutterBottom 
-          sx={{ 
-            textAlign: 'center', 
-            fontWeight: 600, 
-            background: '#6a11cb',
+          sx={{  
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             mb: 3
@@ -58,15 +52,6 @@ export default function Tasks() {
               mr: 1,
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
-                '& fieldset': {
-                  borderColor: '#a0a0a0',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#6a11cb'
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#2575fc'
-                }
               }
             }}
           />
@@ -75,12 +60,7 @@ export default function Tasks() {
             variant="contained"
             onClick={handleAddTask}
             sx={{ 
-              minWidth: 120, 
-              borderRadius: 2,
-              background: '#6a11cb',
-              '&:hover': {
-                boxShadow: '0 4px 8px rgba(106,17,203,0.3)'
-              }
+              minWidth: 120,
             }}
           >
             Add Task
@@ -123,7 +103,7 @@ export default function Tasks() {
                     <IconButton 
                       edge="end" 
                       aria-label="edit"
-                      sx={{ mr: 1, color: '#6a11cb' }}
+                      sx={{ mr: 1}}
                     >
                       <EditIcon />
                     </IconButton>

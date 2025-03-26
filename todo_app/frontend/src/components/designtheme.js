@@ -22,9 +22,8 @@ const theme = createTheme({
     fontFamily: 'Roboto, Arial, sans-serif',
     h4: {
       fontWeight: 600,
-      backgroundImage: '#6a11cb',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent'
+      background: '#6a11cb',
+      textAlign: 'center',
     }
   },
   components: {
@@ -57,14 +56,21 @@ const theme = createTheme({
         },
         containedPrimary: {
           backgroundImage: '#6a11cb',
-        }
+        },
+        outlinedPrimary: {
+          borderColor: '#6a11cb',
+          color: '#6a11cb',
+          '&:hover': {
+            borderColor: '#2575fc',
+            color: '#2575fc'
+            } 
+        },
       }
     },
     MuiPaper: {
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0 6px 12px rgba(0,0,0,0.05)'
         }
       }
     },
@@ -77,6 +83,7 @@ const theme = createTheme({
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
+            textAlign: 'center'
           
         }
       }

@@ -17,34 +17,19 @@ export default function SignupPage() {
 
   return (
     <Container 
-      maxWidth="sm" 
-      sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        justifyContent: 'center',
-        alignItems: 'center', 
-        minHeight: '100vh', 
-        background: '#f5f7fa', 
-        py: 4 
-      }}
+      maxWidth="sm"
     >
       <Paper 
         elevation={6} 
         sx={{ 
           width: '100%', 
           p: 4, 
-          borderRadius: 3,
-          background: 'white',
-          boxShadow: '0 6px 12px rgba(0,0,0,0.05)'
         }}
       >
         <Typography 
           variant="h4" 
           gutterBottom 
-          sx={{ 
-            textAlign: 'center', 
-            fontWeight: 600, 
-            background: '#6a11cb',
+          sx={{
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             mb: 3
@@ -68,9 +53,6 @@ export default function SignupPage() {
             sx={{ 
               '& .MuiOutlinedInput-root': {
                 borderRadius: 3,
-                '& fieldset': {
-                  borderColor: '#a0a0a0',
-                }
               }
             }}
           />
@@ -82,9 +64,6 @@ export default function SignupPage() {
             sx={{ 
               '& .MuiOutlinedInput-root': {
                 borderRadius: 3,
-                '& fieldset': {
-                  borderColor: '#a0a0a0',
-                }
               }
             }}
           />
@@ -97,9 +76,6 @@ export default function SignupPage() {
             sx={{ 
               '& .MuiOutlinedInput-root': {
                 borderRadius: 3,
-                '& fieldset': {
-                  borderColor: '#a0a0a0',
-                }
               }
             }}
           />
@@ -111,11 +87,7 @@ export default function SignupPage() {
             sx={{ 
               mt: 1,
               borderRadius: 3,
-              background: '#6a11cb',
               py: 1.5,
-              '&:hover': {
-                boxShadow: '0 4px 8px rgba(106,17,203,0.3)'
-              }
             }}
           >
             Sign Up
@@ -126,17 +98,13 @@ export default function SignupPage() {
             sx={{ 
               textAlign: 'center', 
               color: '#6c757d',
-              mt: 2
+              mt: 0.5
             }}
           >
             Already have an account? 
             <Button
               onClick={handleLogin}
-              sx={{ 
-                color: '#6a11cb', 
-                textTransform: 'none',
-                fontWeight: 600
-              }}
+              sx={{ fontWeight: 600 }}
             >
               Login
             </Button>
@@ -145,11 +113,7 @@ export default function SignupPage() {
           <Button 
             component={Link}
             to="/"
-            sx={{ 
-              color: '#6a11cb', 
-              textTransform: 'none',
-              fontWeight: 600
-            }}
+            sx={{ fontWeight: 600 }}
           >
             Home
           </Button>
