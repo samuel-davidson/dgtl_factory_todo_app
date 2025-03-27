@@ -1,5 +1,5 @@
-// Will contain page for sign up via username, email, and password
-import React from 'react';
+// Contains page for sign up via username, email, and password
+import React, {useState} from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { Container, TextField, Button, Box, Typography, Paper } from '@mui/material';
@@ -11,9 +11,21 @@ export default function SignupPage() {
     navigate('/login');
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = e => {
+    e.preventDefault();
+    console.log(formData);
     navigate('/tasks');
   };
+
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
+
+  const { username, email, password } = formData;
+  const onChange = e => setFormData({...formData, [e.target.name]: e.target.value });
+  
 
   return (
     <Container 
@@ -39,7 +51,8 @@ export default function SignupPage() {
         </Typography>
         
         <Box 
-          component="form" 
+          component="form"
+          onSubmit={handleSignUp} 
           sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -47,8 +60,11 @@ export default function SignupPage() {
           }}
         >
           <TextField
+            name="username"
             label="Username"
             variant="outlined"
+            value={username}
+            onChange ={onChange} required
             fullWidth
             sx={{ 
               '& .MuiOutlinedInput-root': {
@@ -58,8 +74,11 @@ export default function SignupPage() {
           />
 
           <TextField
+            name="email"
             label="Email"
             variant="outlined"
+            value={email}
+            onChange ={onChange} required
             fullWidth
             sx={{ 
               '& .MuiOutlinedInput-root': {
@@ -69,9 +88,12 @@ export default function SignupPage() {
           />
           
           <TextField
+            name="password"
             label="Password"
             type="password"
             variant="outlined"
+            value={password}
+            onChange ={onChange} required
             fullWidth
             sx={{ 
               '& .MuiOutlinedInput-root': {
@@ -81,9 +103,9 @@ export default function SignupPage() {
           />
 
           <Button
+            type="submit"
             variant="contained"
             fullWidth
-            onClick={handleSignUp}
             sx={{ 
               mt: 1,
               borderRadius: 3,

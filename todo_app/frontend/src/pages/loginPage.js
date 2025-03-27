@@ -1,5 +1,5 @@
 // Will contain page for existing user login
-import React from 'react';
+import React, { useState} from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { Container, TextField, Button, Box, Typography, Paper } from '@mui/material';
@@ -11,9 +11,20 @@ export default function LoginPage() {
     navigate('/signup');
   };
 
-  const handleLogin = () => {
+  const handleLogin = e => {
+    e.preventDefault();
+    console.log(formData);
     navigate('/tasks');
   };
+
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
+
+  const { username, password } = formData;
+  const onChange = e => setFormData({...formData, [e.target.name]: e.target.value });
+  
 
   return (
     <Container 
@@ -47,8 +58,11 @@ export default function LoginPage() {
           }}
         >
           <TextField
+            name="username"
             label="Username"
             variant="outlined"
+            value={username}
+            onChange ={onChange} required
             fullWidth
             sx={{ 
               '& .MuiOutlinedInput-root': {
@@ -58,9 +72,12 @@ export default function LoginPage() {
           />
           
           <TextField
+            name="password"
             label="Password"
             type="password"
             variant="outlined"
+            value={password}
+            onChange ={onChange} required
             fullWidth
             sx={{ 
               '& .MuiOutlinedInput-root': {
