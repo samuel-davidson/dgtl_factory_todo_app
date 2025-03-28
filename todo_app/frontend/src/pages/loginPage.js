@@ -51,6 +51,7 @@ export default function LoginPage() {
         
         <Box 
           component="form" 
+          onSubmit={handleLogin}
           sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -86,9 +87,9 @@ export default function LoginPage() {
             }}
           />
           <Button
+            type="submit"
             variant="contained"
             fullWidth
-            onClick={handleLogin}
             sx={{ 
               mt: 1,
               borderRadius: 3,

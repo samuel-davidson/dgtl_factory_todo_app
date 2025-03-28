@@ -32,28 +32,21 @@ export default function Home() {
                     sx={{ 
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
-                        mb: 3
+                        mb: 1
                     }}
                 >
-                    To-Do List App
+                    To-Do List Application
                 </Typography>
 
-                <img 
-                    src="./android-chrome-192x192.png" 
-                    alt="Davidson Designs Logo" 
-                    style={{ 
-                        maxWidth: '150px', 
-                        marginBottom: '20px' 
-                    }}
-                />
-
-                <Typography variant="body1">
-                    This is the start of my To-Do List App.
+                <Typography variant="h6">
+                    2025 Samuel Davidson
                 </Typography>
 
                 <Typography variant="body1">
-                    The application allows users to sign up, log in, create, read,
-                    update, and delete tasks.
+                    This application allows users to register an 
+                    accout and login to the created account.  Once logged in,
+                    the user can view their to-do list, add a new task, and edit
+                    or delete an existing task.
                 </Typography>
                 <Box 
                     sx={{ 

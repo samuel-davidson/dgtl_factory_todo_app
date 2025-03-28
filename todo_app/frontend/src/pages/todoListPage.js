@@ -2,7 +2,8 @@
 //    to handle adding, editing, and deleting user tasks. 
 
 import React from 'react';
-import { Container, Typography, Paper } from '@mui/material';
+import  { Link } from 'react-router-dom';
+import { Container, Typography, Button, Paper } from '@mui/material';
 import TaskForm from '../components/taskForm';
 
 export default function Tasks() {
@@ -29,6 +30,13 @@ export default function Tasks() {
 
         <TaskForm />
         
+        <Button 
+            component={Link}
+            to="/"
+            sx={{ fontWeight: 600 }}
+          >
+            Home / Log Out
+          </Button>
       </Paper>
     </Container>
   );
