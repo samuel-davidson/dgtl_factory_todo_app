@@ -1,6 +1,4 @@
-// used to edit, delete and add tasks
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,26 +8,80 @@ export default function TaskForm() {
   const [newTask, setNewTask] = useState('');
   const [editingIndex, setEditingIndex] = useState(null);
 
-  const handleAddTask = () => {
+  // Load tasks on component mount
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('/tasks');
+      if (response.ok) {
+        const data = await response.json();
+        setTasks(data);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
+  const handleAddTask = async () => {
     if (newTask.trim()) {
       if (editingIndex !== null) {
-        const updatedTasks = [...tasks];
-        updatedTasks[editingIndex] = newTask.trim();
-        setTasks(updatedTasks);
-        setEditingIndex(null);
+        // Update existing task
+        try {
+          const response = await fetch(`/tasks/${tasks[editingIndex]._id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: newTask.trim() })
+          });
+          
+          if (response.ok) {
+            // Refresh the task list from server
+            fetchTasks();
+            setEditingIndex(null);
+          }
+        } catch (error) {
+          console.error('Error updating task:', error);
+        }
       } else {
-        setTasks([...tasks, newTask.trim()]);
+        // Add new task
+        try {
+          const response = await fetch('/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: newTask.trim() })
+          });
+          
+          if (response.ok) {
+            // Refresh the task list from server
+            fetchTasks();
+          }
+        } catch (error) {
+          console.error('Error adding task:', error);
+        }
       }
       setNewTask('');
     }
   };
 
-  const handleDeleteTask = (idxToDelete) => {
-    setTasks(tasks.filter((_, index) => index !== idxToDelete));
+  const handleDeleteTask = async (idxToDelete) => {
+    try {
+      const response = await fetch(`/tasks/${tasks[idxToDelete]._id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        // Refresh the task list from server
+        fetchTasks();
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
   const handleEditTask = (idx) => {
-    setNewTask(tasks[idx]);
+    setNewTask(tasks[idx].task);
     setEditingIndex(idx);
   };
 
@@ -112,7 +164,7 @@ export default function TaskForm() {
                 </>
               }
             >
-              <ListItemText primary={task} />
+              <ListItemText primary={task.task} />
             </ListItem>
           ))}
         </List>

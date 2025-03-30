@@ -1,61 +1,123 @@
 import mongoose from 'mongoose';
 import 'dotenv/config';
 
-mongoose.connect(
-    process.env.MONGODB_CONNECT_STRING,
-    { useNewUrlParser: true }
-);
-const db = mongoose.connection;
+// MongoDB connection function with better error handling
+const connectDB = async () => {
+    try {
+        // Check if connection string exists
+        if (!process.env.MONGODB_CONNECT_STRING) {
+            throw new Error('MONGODB_CONNECT_STRING is not defined in environment variables');
+        }
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once("open", () => {
-    console.log('Success: Database connected');
+        // Add connection options for better stability
+        const connectionOptions = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
+            socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+        };
+
+        await mongoose.connect(process.env.MONGODB_CONNECT_STRING, connectionOptions);
+        console.log('MongoDB connected successfully');
+    } catch (error) {
+        console.error('MongoDB connection error:', error.message);
+        process.exit(1);
+    }
+};
+
+// Call the connection function
+connectDB();
+
+// Set up event listeners for the connection
+mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', err);
 });
 
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected. Attempting to reconnect...');
+    connectDB();
+});
+
+// Define schema with proper validation
 const taskSchema = mongoose.Schema({
-	task: { type: String, required: true },
+    task: { 
+        type: String, 
+        required: [true, 'Task name is required'],
+        trim: true,
+        maxlength: [1000, 'Task cannot be more than 1000 characters']
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-const taskList = mongoose.model('Tasks', taskSchema);
+// Create the model
+const TaskList = mongoose.model('Task', taskSchema);
 
 // CREATE model *****************************************
-const createTask = async (task) => {
-    const singletask = new taskList({ 
-        task: task,
-    });
-    return singletask.save();
-}
-
+const createTask = async (taskContent) => {
+    try {
+        const singleTask = new TaskList({ 
+            task: taskContent
+        });
+        return await singleTask.save();
+    } catch (error) {
+        console.error('Error creating task:', error);
+        throw error; // Re-throw to handle in controller
+    }
+};
 
 // RETRIEVE model *****************************************
-// Retrieve all documents and return a promise.
 const retrieveTasks = async () => {
-    const query = taskList.find();
-    return query.exec();
-}
+    try {
+        return await TaskList.find().sort({ createdAt: -1 }); // Newest first
+    } catch (error) {
+        console.error('Error retrieving tasks:', error);
+        throw error;
+    }
+};
 
 // RETRIEVE by ID
 const retrieveTaskByID = async (_id) => {
-    return taskList.findById(_id);
-}
-
-// DELETE model based on _id  *****************************************
-const deleteTaskById = async (_id) => {
-    const result = await taskList.deleteOne({_id: _id});
-    return result.deletedCount;
+    try {
+        return await TaskList.findById(_id);
+    } catch (error) {
+        console.error('Error retrieving task by ID:', error);
+        throw error;
+    }
 };
 
+// DELETE model based on _id *****************************************
+const deleteTaskById = async (_id) => {
+    try {
+        const result = await TaskList.deleteOne({ _id: _id });
+        return result.deletedCount;
+    } catch (error) {
+        console.error('Error deleting task:', error);
+        throw error;
+    }
+};
 
 // UPDATE model *****************************************************
-const updateTask = async (_id, task) => {
-    const result = await taskList.replaceOne({_id: _id }, {
-        task: task,
-    });
-    return { 
-        _id: _id, 
-        task: task,
+const updateTask = async (_id, taskContent) => {
+    try {
+        const result = await TaskList.findByIdAndUpdate(
+            _id, 
+            { task: taskContent },
+            { new: true } // Return the updated document
+        );
+        
+        if (!result) {
+            throw new Error('Task not found');
+        }
+        
+        return result;
+    } catch (error) {
+        console.error('Error updating task:', error);
+        throw error;
     }
-}
+};
 
 // EXPORT the variables for use in the controller file.
-export { createTask, retrieveTasks, retrieveTaskByID, updateTask, deleteTaskById }
+export { createTask, retrieveTasks, retrieveTaskByID, updateTask, deleteTaskById };
