@@ -1,8 +1,7 @@
-// Will contain page for existing user login
-import React, { useState} from 'react';
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
-import { Container, TextField, Button, Box, Typography, Paper } from '@mui/material';
+import { Container, Button, Typography, Paper } from '@mui/material';
+import LoginForm from '../components/login';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -10,21 +9,6 @@ export default function LoginPage() {
   const handleSignUp = () => {
     navigate('/signup');
   };
-
-  const handleLogin = e => {
-    e.preventDefault();
-    console.log(formData);
-    navigate('/tasks');
-  };
-
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-
-  const { username, password } = formData;
-  const onChange = e => setFormData({...formData, [e.target.name]: e.target.value });
-  
 
   return (
     <Container 
@@ -49,80 +33,31 @@ export default function LoginPage() {
           Login
         </Typography>
         
-        <Box 
-          component="form" 
-          onSubmit={handleLogin}
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: 2 
+        <LoginForm />
+
+        <Typography 
+          variant="body2" 
+          sx={{
+            color: '#6c757d',
+            mt: 2
           }}
         >
-          <TextField
-            name="username"
-            label="Username"
-            variant="outlined"
-            value={username}
-            onChange ={onChange} required
-            fullWidth
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              }
-            }}
-          />
-          
-          <TextField
-            name="password"
-            label="Password"
-            type="password"
-            variant="outlined"
-            value={password}
-            onChange ={onChange} required
-            fullWidth
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              }
-            }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ 
-              mt: 1,
-              borderRadius: 3,
-              py: 1.5,
-            }}
-          >
-            Login
-          </Button>
-
-          <Typography 
-            variant="body2" 
-            sx={{
-              color: '#6c757d',
-              mt: 0.5
-            }}
-          >
-            Don't have an account?
-            <Button 
-              onClick={handleSignUp}
-              sx={{ fontWeight: 600 }}
-            >
-              Sign Up
-            </Button>
-          </Typography>
-
+          Don't have an account?
           <Button 
-            component={Link}
-            to="/"
+            onClick={handleSignUp}
             sx={{ fontWeight: 600 }}
           >
-            Home
+            Sign Up
           </Button>
-        </Box>
+        </Typography>
+
+        <Button 
+          component={Link}
+          to="/"
+          sx={{ fontWeight: 600 }}
+        >
+          Home
+        </Button>
       </Paper>
     </Container>
   );

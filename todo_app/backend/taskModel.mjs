@@ -46,6 +46,11 @@ const taskSchema = mongoose.Schema({
         trim: true,
         maxlength: [1000, 'Task cannot be more than 1000 characters']
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -56,22 +61,23 @@ const taskSchema = mongoose.Schema({
 const TaskList = mongoose.model('Task', taskSchema);
 
 // CREATE model *****************************************
-const createTask = async (taskContent) => {
+const createTask = async (taskContent, userId) => {
     try {
         const singleTask = new TaskList({ 
-            task: taskContent
+            task: taskContent,
+            user: userId
         });
         return await singleTask.save();
     } catch (error) {
         console.error('Error creating task:', error);
-        throw error; // Re-throw to handle in controller
+        throw error;
     }
 };
 
 // RETRIEVE model *****************************************
-const retrieveTasks = async () => {
+const retrieveTasks = async (userId) => {
     try {
-        return await TaskList.find().sort({ createdAt: -1 }); // Newest first
+        return await TaskList.find({ user: userId }).sort({ createdAt: -1 }); // Newest first
     } catch (error) {
         console.error('Error retrieving tasks:', error);
         throw error;
@@ -79,9 +85,9 @@ const retrieveTasks = async () => {
 };
 
 // RETRIEVE by ID
-const retrieveTaskByID = async (_id) => {
+const retrieveTaskByID = async (_id, userId) => {
     try {
-        return await TaskList.findById(_id);
+        return await TaskList.findOne({ _id, user: userId });
     } catch (error) {
         console.error('Error retrieving task by ID:', error);
         throw error;
@@ -89,9 +95,9 @@ const retrieveTaskByID = async (_id) => {
 };
 
 // DELETE model based on _id *****************************************
-const deleteTaskById = async (_id) => {
+const deleteTaskById = async (_id, userId) => {
     try {
-        const result = await TaskList.deleteOne({ _id: _id });
+        const result = await TaskList.deleteOne({ _id, user: userId });
         return result.deletedCount;
     } catch (error) {
         console.error('Error deleting task:', error);
@@ -99,11 +105,12 @@ const deleteTaskById = async (_id) => {
     }
 };
 
+
 // UPDATE model *****************************************************
-const updateTask = async (_id, taskContent) => {
+const updateTask = async (_id, taskContent, userId) => {
     try {
-        const result = await TaskList.findByIdAndUpdate(
-            _id, 
+        const result = await TaskList.findOneAndUpdate(
+            { _id, user: userId }, 
             { task: taskContent },
             { new: true } // Return the updated document
         );

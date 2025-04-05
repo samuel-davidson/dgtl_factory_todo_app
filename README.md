@@ -1,15 +1,21 @@
-# dgtl_factory_todo_app
+# To-Do Application
+Samuel Davidson
 
-## To start:
-### - download the repository from GH
-### - open backend folder
-### - run "npm start" in terminal
-### - open frontend folder
-### - run "npm start" in terminal
-
-
-## Notes
-### Was able to implement frontend design with MaterialUI, React usage, React routing, and state managment.
-### Started the backend and was able to get database connection working, but was unable to get frontend and backend working together in time allotted.  Also was unable to implement JWT authentication in time allotted.  Thank you very much for this opportunity!
-
-## Samuel Davidson
+## Prerequisites:
+- ensure that you are running node version 20.12.0
+- clone the repository from GitHub
+- create a .env file in the `todo_app/backend` directory
+- paste the following into the newly created .env file with your MongoDB connection string and JWT key
+```
+MONGODB_CONNECT_STRING='your connection string here'
+PORT=8080
+JWT_KEY='your key here'
+```
+- save the .env file
+- navigate to the `backend` directory in terminal
+- run `npm install`
+- navigate to the `frontend` directory in terminal
+- run `npm install`
+- navigate to the `todo_app` directory in terminal
+- run `npm install`
+- run `npm start`

@@ -1,36 +1,44 @@
 import 'dotenv/config';
 import express from 'express';
 import * as task from './taskModel.mjs';
+import authRouter, { auth } from './authController.mjs';
 import cors from 'cors';
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 const app = express();
 const corsOptions = {
     origin: "http://localhost:3000",
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-type', 'Authorization']
+    allowedHeaders: ['Content-type', 'Authorization'],
+    credentials: true
 }
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// check for JWT key
+if (!process.env.JWT_KEY) {
+    console.log('JWT_KEY not found, using default key. Set a secure JWT_KEY in your environment variables.');
+}
 
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
     next();
 });
 
-// CREATE controller
-app.post('/tasks', async (req, res) => {
+// Auth routes
+app.use('/auth', authRouter);
+
+// Protect all task routes with auth middleware
+app.post('/tasks', auth, async (req, res) => {
     try {
-        // Validate required fields
         if (!req.body || !req.body.task) {
             return res.status(400).json({ error: 'Task content is required' });
         }
         
-        const newTask = await task.createTask(req.body.task);
-        console.log(`Task created: ${newTask._id}`);
+        const newTask = await task.createTask(req.body.task, req.user.id);
+        console.log(`Task created: ${newTask._id} for user: ${req.user.id}`);
         res.status(201).json(newTask);
     } catch (error) {
         console.error('Error in POST /tasks:', error);
@@ -38,11 +46,10 @@ app.post('/tasks', async (req, res) => {
     }
 });
 
-// RETRIEVE controller
-app.get('/tasks', async (req, res) => {
+app.get('/tasks', auth, async (req, res) => {
     try {
-        const tasks = await task.retrieveTasks();
-        console.log(`Retrieved ${tasks.length} tasks`);
+        const tasks = await task.retrieveTasks(req.user.id);
+        console.log(`Retrieved ${tasks.length} tasks for user: ${req.user.id}`);
         res.json(tasks);
     } catch (error) {
         console.error('Error in GET /tasks:', error);
@@ -50,10 +57,9 @@ app.get('/tasks', async (req, res) => {
     }
 });
 
-// RETRIEVE by ID controller
-app.get('/tasks/:_id', async (req, res) => {
+app.get('/tasks/:_id', auth, async (req, res) => {
     try {
-        const foundTask = await task.retrieveTaskByID(req.params._id);
+        const foundTask = await task.retrieveTaskByID(req.params._id, req.user.id);
         
         if (!foundTask) {
             return res.status(404).json({ error: 'Task not found' });
@@ -66,21 +72,18 @@ app.get('/tasks/:_id', async (req, res) => {
     }
 });
 
-// UPDATE controller
-app.put('/tasks/:_id', async (req, res) => {
+app.put('/tasks/:_id', auth, async (req, res) => {
     try {
-        // Validate required fields
         if (!req.body || !req.body.task) {
             return res.status(400).json({ error: 'Task content is required' });
         }
         
-        const updatedTask = await task.updateTask(req.params._id, req.body.task);
-        console.log(`Task updated: ${updatedTask._id}`);
+        const updatedTask = await task.updateTask(req.params._id, req.body.task, req.user.id);
+        console.log(`Task updated: ${updatedTask._id} for user: ${req.user.id}`);
         res.json(updatedTask);
     } catch (error) {
         console.error(`Error in PUT /tasks/${req.params._id}:`, error);
         
-        // Handle 'Task not found' error specifically
         if (error.message === 'Task not found') {
             return res.status(404).json({ error: 'Task not found' });
         }
@@ -89,16 +92,15 @@ app.put('/tasks/:_id', async (req, res) => {
     }
 });
 
-// DELETE Controller
-app.delete('/tasks/:_id', async (req, res) => {
+app.delete('/tasks/:_id', auth, async (req, res) => {
     try {
-        const deletedCount = await task.deleteTaskById(req.params._id);
+        const deletedCount = await task.deleteTaskById(req.params._id, req.user.id);
         
         if (deletedCount === 0) {
             return res.status(404).json({ error: 'Task not found' });
         }
         
-        console.log(`Task deleted: ${req.params._id}`);
+        console.log(`Task deleted: ${req.params._id} for user: ${req.user.id}`);
         res.json({ message: 'Task deleted successfully' });
     } catch (error) {
         console.error(`Error in DELETE /tasks/${req.params._id}:`, error);
@@ -106,7 +108,7 @@ app.delete('/tasks/:_id', async (req, res) => {
     }
 });
 
-// 404 handler for unknown routes
+// 404 handler
 app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
@@ -121,4 +123,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Task API available at http://localhost:${PORT}/tasks`);
+    console.log(`Auth API available at http://localhost:${PORT}/auth`);
 });
